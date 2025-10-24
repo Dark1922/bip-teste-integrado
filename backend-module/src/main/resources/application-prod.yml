@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bip
+    username: bip
+    password: bip
+  jpa:
+    hibernate:
+      ddl-auto: validate

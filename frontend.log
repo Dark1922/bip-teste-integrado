@@ -1,0 +1,32 @@
+npm warn Unknown user config "python". This will stop working in the next major version of npm.
+
+> beneficio-frontend@1.0.0 start
+> ng serve
+
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+
+Initial chunk files   | Names         |  Raw size
+vendor.js             | vendor        |   2.80 MB | 
+polyfills.js          | polyfills     | 262.58 kB | 
+styles.css, styles.js | styles        | 151.92 kB | 
+main.js               | main          |  77.40 kB | 
+runtime.js            | runtime       |   6.51 kB | 
+
+                      | Initial total |   3.29 MB
+
+Build at: 2025-10-22T22:14:04.918Z - Hash: 0dfdf7ae70274141 - Time: 8006ms
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+
+
+✔ Compiled successfully.
+✔ Browser application bundle generation complete.
+
+
+
+5 unchanged chunks
+
+Build at: 2025-10-22T22:14:05.496Z - Hash: 0dfdf7ae70274141 - Time: 439ms
+
+✔ Compiled successfully.

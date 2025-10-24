@@ -1,0 +1,443 @@
+{
+  "info": {
+    "name": "Sistema de Benefícios - API Collection",
+    "description": "Collection completa para testar todas as funcionalidades da API de Benefícios",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Benefícios",
+      "item": [
+        {
+          "name": "1. Listar todos os benefícios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/beneficios",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios"]
+            },
+            "description": "Lista todos os benefícios ativos"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Criar novo benefício",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Benefício Teste\",\n  \"descricao\": \"Descrição do benefício teste\",\n  \"valor\": 1000.00,\n  \"ativo\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficios",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios"]
+            },
+            "description": "Cria um novo benefício"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Buscar benefício por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "1"]
+            },
+            "description": "Busca um benefício específico pelo ID"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Atualizar benefício",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Benefício Atualizado\",\n  \"descricao\": \"Descrição atualizada\",\n  \"valor\": 1500.00,\n  \"ativo\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "1"]
+            },
+            "description": "Atualiza um benefício existente"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Buscar benefícios por nome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/buscar?nome=Teste",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "buscar"],
+              "query": [
+                {
+                  "key": "nome",
+                  "value": "Teste"
+                }
+              ]
+            },
+            "description": "Busca benefícios que contenham o nome especificado"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Excluir benefício (lógico)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "1"]
+            },
+            "description": "Marca um benefício como inativo (exclusão lógica)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transferências",
+      "item": [
+        {
+          "name": "1. Transferir entre benefícios - Sucesso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromId\": 1,\n  \"toId\": 2,\n  \"valor\": 100.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/transferir",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "transferir"]
+            },
+            "description": "Transfere valor entre dois benefícios"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Transferir - Saldo insuficiente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromId\": 1,\n  \"toId\": 2,\n  \"valor\": 10000.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/transferir",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "transferir"]
+            },
+            "description": "Tenta transferir valor maior que o saldo disponível"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Transferir - Mesmo benefício",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromId\": 1,\n  \"toId\": 1,\n  \"valor\": 100.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/transferir",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "transferir"]
+            },
+            "description": "Tenta transferir para o mesmo benefício (deve falhar)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Validações",
+      "item": [
+        {
+          "name": "1. Criar benefício - Dados inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"\",\n  \"valor\": -100.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficios",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios"]
+            },
+            "description": "Tenta criar benefício com dados inválidos"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Transferir - Dados inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromId\": null,\n  \"toId\": 2,\n  \"valor\": 0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficios/transferir",
+              "host": ["{{baseUrl}}"],
+              "path": ["beneficios", "transferir"]
+            },
+            "description": "Tenta transferir com dados inválidos"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cenários de Teste",
+      "item": [
+        {
+          "name": "Cenário 1: Fluxo completo CRUD",
+          "item": [
+            {
+              "name": "1. Criar benefício A",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"Benefício A\",\n  \"descricao\": \"Primeiro benefício\",\n  \"valor\": 1000.00,\n  \"ativo\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficios",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["beneficios"]
+                }
+              }
+            },
+            {
+              "name": "2. Criar benefício B",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"Benefício B\",\n  \"descricao\": \"Segundo benefício\",\n  \"valor\": 500.00,\n  \"ativo\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficios",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["beneficios"]
+                }
+              }
+            },
+            {
+              "name": "3. Listar benefícios",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/beneficios",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["beneficios"]
+                }
+              }
+            },
+            {
+              "name": "4. Transferir de A para B",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fromId\": 1,\n  \"toId\": 2,\n  \"valor\": 200.00\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficios/transferir",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["beneficios", "transferir"]
+                }
+              }
+            },
+            {
+              "name": "5. Verificar saldos após transferência",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/beneficios",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["beneficios"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cenário 2: Teste de concorrência",
+          "item": [
+            {
+              "name": "1. Criar benefício para teste",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"Benefício Concorrência\",\n  \"descricao\": \"Para teste de concorrência\",\n  \"valor\": 1000.00,\n  \"ativo\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficios",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["beneficios"]
+                }
+              }
+            },
+            {
+              "name": "2. Atualizar benefício (simula concorrência)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nome\": \"Benefício Atualizado\",\n  \"descricao\": \"Atualizado com sucesso\",\n  \"valor\": 1200.00,\n  \"ativo\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficios/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["beneficios", "1"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Log da requisição",
+          "console.log('Executando: ' + pm.info.requestName);"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Testes automáticos",
+          "pm.test('Status code is 200 or 201', function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+          "});",
+          "",
+          "pm.test('Response time is less than 2000ms', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "// Teste específico para listagem",
+          "if (pm.info.requestName.includes('Listar')) {",
+          "    pm.test('Response is an array', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData).to.be.an('array');",
+          "    });",
+          "}",
+          "",
+          "// Teste específico para criação",
+          "if (pm.info.requestName.includes('Criar')) {",
+          "    pm.test('Response has id field', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData).to.have.property('id');",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}
