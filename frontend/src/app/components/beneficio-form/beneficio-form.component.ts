@@ -1,66 +1,134 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BeneficioService } from '../../services/beneficio.service';
 import { Beneficio } from '../../models/beneficio.model';
-import { SnackService } from '../../services/snack.service';
 
 @Component({
   selector: 'app-beneficio-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './beneficio-form.component.html',
-  styleUrls: ['./beneficio-form.component.css']
+  styleUrls: ['./beneficio-form.component.scss']
 })
 export class BeneficioFormComponent implements OnInit {
-
-  beneficio: Beneficio = { nome: '', descricao: '', valor: 0, ativo: true };
-  isEdicao = false;
-  salvando = false;
+  form!: FormGroup;
+  isEditMode = false;
+  beneficioId?: number;
+  loading = false;
+  submitting = false;
 
   constructor(
+    private fb: FormBuilder,
     private beneficioService: BeneficioService,
-    private route: ActivatedRoute,
     private router: Router,
-    private snack: SnackService
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
+    this.initForm();
+    this.checkEditMode();
+  }
+
+  private initForm(): void {
+    this.form = this.fb.group({
+      nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      descricao: ['', [Validators.maxLength(500)]],
+      valor: [0, [Validators.required, Validators.min(0)]],
+      ativo: [true]
+    });
+  }
+
+  private checkEditMode(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.isEdicao = true;
-      this.carregarBeneficio(parseInt(id));
+      this.isEditMode = true;
+      this.beneficioId = +id;
+      this.carregarBeneficio();
     }
   }
 
-  carregarBeneficio(id: number): void {
-    this.beneficioService.buscarPorId(id).subscribe({
-      next: (beneficio) => this.beneficio = beneficio,
-      error: () => {
-        this.snack.error('Erro ao carregar benefício.');
-        this.router.navigate(['/beneficios']);
+  private carregarBeneficio(): void {
+    this.loading = true;
+    this.beneficioService.buscarPorId(this.beneficioId!).subscribe({
+      next: (beneficio) => {
+        this.form.patchValue(beneficio);
+        this.loading = false;
+      },
+      error: (error) => {
+        this.showError(error.message);
+        this.loading = false;
+        this.voltar();
       }
     });
   }
 
   salvar(): void {
-    if (this.salvando) return;
-    this.salvando = true;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
-    const operacao = this.isEdicao
-      ? this.beneficioService.atualizar(this.beneficio.id!, this.beneficio)
-      : this.beneficioService.criar(this.beneficio);
+    this.submitting = true;
+    const beneficio: Beneficio = this.form.value;
 
-    operacao.subscribe({
+    const operation = this.isEditMode
+      ? this.beneficioService.atualizar(this.beneficioId!, beneficio)
+      : this.beneficioService.criar(beneficio);
+
+    operation.subscribe({
       next: () => {
-        this.snack.ok(this.isEdicao ? 'Benefício atualizado!' : 'Benefício criado!');
+        this.showSuccess(
+          this.isEditMode ? 'Benefício atualizado com sucesso!' : 'Benefício criado com sucesso!'
+        );
         this.router.navigate(['/beneficios']);
       },
-      error: () => {
-        this.snack.error('Erro ao salvar benefício.');
-        this.salvando = false;
+      error: (error) => {
+        this.showError(error.message);
+        this.submitting = false;
       }
+    });
+  }
+
+  voltar(): void {
+    this.router.navigate(['/beneficios']);
+  }
+
+  // Getters para validação dos campos
+  get nome() { return this.form.get('nome'); }
+  get descricao() { return this.form.get('descricao'); }
+  get valor() { return this.form.get('valor'); }
+
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Fechar', {
+      duration: 3000,
+      panelClass: ['success-snackbar']
+    });
+  }
+
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Fechar', {
+      duration: 5000,
+      panelClass: ['error-snackbar']
     });
   }
 }

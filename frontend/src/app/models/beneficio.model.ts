@@ -5,10 +5,35 @@ export interface Beneficio {
   valor: number;
   ativo?: boolean;
   version?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export interface Transferencia {
-  fromId: number;
-  toId: number;
+export interface TransferenciaRequest {
+  beneficioOrigemId: number;
+  beneficioDestinoId: number;
   valor: number;
+}
+
+export interface TransferenciaResponse {
+  sucesso: boolean;
+  mensagem: string;
+  transacao: {
+    origemId: number;
+    destinoId: number;
+    valor: number;
+    dataHora: string;
+  };
+  origem: {
+    id: number;
+    nome: string;
+    valorAnterior: number;
+    valorAtual: number;
+  };
+  destino: {
+    id: number;
+    nome: string;
+    valorAnterior: number;
+    valorAtual: number;
+  };
 }
